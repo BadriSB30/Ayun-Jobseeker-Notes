@@ -1,3 +1,4 @@
+# src/styles.py
 APP_STYLE = """
 /* -------------------------------
    Global Style

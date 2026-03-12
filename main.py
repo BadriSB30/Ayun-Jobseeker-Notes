@@ -1,3 +1,4 @@
+# src/main.py
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -11,6 +12,22 @@ from PyQt5.QtGui import QIcon
 from config_db import init_db, get_connection, OPTIONS_PATH, DEFAULT_OPTIONS, save_pickle, load_pickle
 from styles import APP_STYLE
 import openpyxl
+
+
+# ---------- Resource Path Helper ----------
+def resource_path(relative_path: str) -> Path:
+    """
+    Resolve path untuk asset, kompatibel dengan mode development maupun
+    setelah di-bundle menggunakan PyInstaller.
+
+    - Mode bundled : menggunakan sys._MEIPASS (folder ekstraksi temp PyInstaller)
+    - Mode development : relatif terhadap lokasi file ini
+    """
+    if hasattr(sys, "_MEIPASS"):
+        base = Path(sys._MEIPASS)
+    else:
+        base = Path(__file__).parent
+    return base / relative_path
 
 
 # ---------- Helper ----------
@@ -81,7 +98,8 @@ class AddEditDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle("Tambah Catatan" if data is None else "Edit Catatan")
         self.resize(420, 400)
-        icon_path = Path(__file__).parent / "assets" / "favicon.ico"
+
+        icon_path = resource_path("assets/favicon.ico")
         if icon_path.exists():
             self.setWindowIcon(QIcon(str(icon_path)))
 
@@ -156,9 +174,11 @@ class SettingsDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle("Pengaturan Platform, Status & Tipe Pekerjaan")
         self.resize(500, 420)
-        icon_path = Path(__file__).parent / "assets" / "favicon.ico"
+
+        icon_path = resource_path("assets/favicon.ico")
         if icon_path.exists():
             self.setWindowIcon(QIcon(str(icon_path)))
+
         self.options = options
         self._build_ui()
 
@@ -221,7 +241,8 @@ class MainWindow(QWidget):
         super().__init__()
         self.setWindowTitle("Jobseeker Notes")
         self.resize(1200, 680)
-        icon_path = Path(__file__).parent / "assets" / "favicon.ico"
+
+        icon_path = resource_path("assets/favicon.ico")
         if icon_path.exists():
             self.setWindowIcon(QIcon(str(icon_path)))
 
@@ -443,9 +464,11 @@ class MainWindow(QWidget):
 # ---------- Main ----------
 def main():
     app = QApplication(sys.argv)
-    icon_path = Path(__file__).parent / "assets" / "favicon.ico"
+
+    icon_path = resource_path("assets/favicon.ico")
     if icon_path.exists():
         app.setWindowIcon(QIcon(str(icon_path)))
+
     win = MainWindow()
     win.show()
     sys.exit(app.exec_())

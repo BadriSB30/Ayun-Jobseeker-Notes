@@ -1,21 +1,64 @@
 # 📋 Jobseeker Note System
 
-Aplikasi desktop untuk mencatat dan mengelola lamaran pekerjaan secara terorganisir menggunakan PyQt5 dengan penyimpanan lokal berbasis SQLite, pickle dan ekspor Excel via openpyxl.
+Aplikasi desktop untuk mencatat dan mengelola lamaran pekerjaan secara terorganisir, dibangun menggunakan **PyQt5** dengan penyimpanan lokal berbasis **SQLite** dan pengelolaan konfigurasi menggunakan **pickle**. Aplikasi juga mendukung ekspor data ke format Excel melalui `openpyxl`.
 
-## Struktur File
+---
+
+## 🚀 Fitur
+
+### 1. Catat Lamaran Kerja
+
+Tambah, edit, dan hapus data lamaran pekerjaan dengan informasi lengkap, meliputi:
+
+- Nama perusahaan
+- Posisi
+- Platform lamaran
+- Tipe pekerjaan
+- Status lamaran
+- Tanggal melamar
+- Estimasi gaji
+
+> Semua data disimpan secara lokal menggunakan **SQLite Database**.
+
+### 2. Kelola & Filter Data
+
+- Menampilkan seluruh lamaran dalam bentuk tabel
+- Pencarian cepat berdasarkan nama perusahaan atau posisi
+- Filter data berdasarkan status lamaran
+
+### 3. Manajemen Opsi Dinamis
+
+Pengguna dapat mengelola opsi-opsi berikut secara fleksibel:
+
+- Platform lamaran (LinkedIn, JobStreet, dll.)
+- Status lamaran
+- Tipe pekerjaan
+
+Opsi disimpan menggunakan **pickle** sehingga dapat dikustomisasi tanpa perlu mengubah kode program.
+
+### 4. Ekspor Data
+
+- Ekspor seluruh data lamaran ke format **Excel** (`.xlsx`)
+- Tabel terformat rapi, siap digunakan untuk dokumentasi atau pelaporan
+
+---
+
+## 📂 Struktur Project
 
 ```
 jobseeker_note_system/
-├── main.py              # Entry point & jendela utama
-├── config_db.py         # Konfigurasi database SQLite dan Pickle
-├── styles.py            # Style aplikasi
-├── build.spec           # Code untuk build aplikasi
+├── main.py              # Entry point & GUI aplikasi
+├── config_db.py         # Konfigurasi SQLite dan Pickle
+├── styles.py            # Styling aplikasi
+├── build.spec           # Konfigurasi build PyInstaller
 ├── assets/              # Ikon dan gambar aplikasi
 │   └── favicon.ico
 └── requirements.txt     # Dependensi Python
 ```
 
-## Instalasi & Menjalankan
+---
+
+## ⚙️ Instalasi & Menjalankan
 
 ### 1. Buat Virtual Environment
 
@@ -28,7 +71,7 @@ python -m venv .venv
 **Windows:**
 
 ```bash
-source .venv/Scripts/activate
+.venv\Scripts\activate
 ```
 
 **macOS / Linux:**
@@ -37,7 +80,11 @@ source .venv/Scripts/activate
 source .venv/bin/activate
 ```
 
-> Setelah aktif, prompt terminal akan berubah menjadi `(.venv) ...`
+Jika berhasil, prompt terminal akan berubah menjadi:
+
+```
+(.venv)
+```
 
 ### 3. Install Dependensi
 
@@ -51,7 +98,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-### 5. Menonaktifkan Virtual Environment (selesai pakai)
+### 5. Menonaktifkan Virtual Environment
 
 ```bash
 deactivate
@@ -59,107 +106,117 @@ deactivate
 
 ---
 
-## Fitur
+## 💾 Penyimpanan Data
 
-### Catat Lamaran Kerja
+Aplikasi menyimpan data secara lokal di komputer pengguna pada folder berikut:
 
-- Tambah, edit, dan hapus data lamaran pekerjaan
-- Simpan informasi: nama perusahaan, posisi, tanggal, status, dan catatan
-- Penyimpanan otomatis ke file lokal `.pkl`
+```
+~/.jobseeker_note/
+```
 
-### Kelola & Filter Data
+Isi folder tersebut:
 
-- Tampilkan semua lamaran dalam bentuk tabel
-- Filter berdasarkan status lamaran (Pending, Interview, Accepted, Rejected)
-- Pencarian cepat berdasarkan nama perusahaan atau posisi
+```
+.jobseeker_note/
+├── job_notes.db        # Database SQLite untuk data lamaran
+└── job_options.pkl     # File konfigurasi opsi (pickle)
+```
 
-### Ekspor Data
+| File              | Fungsi                                                      |
+| ----------------- | ----------------------------------------------------------- |
+| `job_notes.db`    | Database SQLite yang menyimpan semua data lamaran           |
+| `job_options.pkl` | Menyimpan opsi seperti platform, status, dan tipe pekerjaan |
 
-- Export seluruh data lamaran ke format Excel (`.xlsx`)
-- Format tabel rapi dan siap cetak
+### 🔒 Keamanan Data
+
+- Data **tidak** dikirim ke internet
+- Semua data tersimpan sepenuhnya di lokal
+- Disarankan untuk melakukan backup folder `.jobseeker_note` secara berkala
 
 ---
 
-## Penyimpanan Data
+## 🏗️ Build Aplikasi (Compile ke Executable)
 
-Data lamaran disimpan secara lokal di komputer pengguna:
+Aplikasi dapat dikompilasi menjadi file `.exe` menggunakan **PyInstaller**.
 
-```
-C:\Users\<NamaUser>\jobseeker_notes.pkl
-```
-
-- Data **tidak dikirim** ke internet — sepenuhnya tersimpan lokal
-- Disarankan **backup file `.pkl`** secara berkala ke tempat lain
-- Tiap komputer memiliki data masing-masing (tidak tersinkronisasi)
+Tersedia dua cara build — pilih salah satu sesuai kebutuhan.
 
 ---
 
-## Build — Compile ke Executable
+### ✅ Cara 1 — Menggunakan `build.spec` (Direkomendasikan)
 
-Gunakan **PyInstaller** yang sudah termasuk di `requirements.txt`.
-
-### Kenapa `--add-data` wajib disertakan?
-
-Saat `--onefile`, PyInstaller mengekstrak semua file ke folder sementara
-`sys._MEIPASS` di runtime — **bukan** di samping `.exe`. Tanpa `--add-data`,
-folder `assets/` tidak ikut terbundle dan ikon tidak muncul.
-
-`main.py` sudah menggunakan fungsi `resource_path()` yang otomatis mengarah
-ke `sys._MEIPASS` saat berjalan dari build, dan ke folder proyek saat
-berjalan dari source.
-
-### Perintah Build
-
-**Windows** — menghasilkan `.exe` satu file:
-
-```bash
-pyinstaller --noconfirm --onefile --windowed --icon=assets/favicon.ico --add-data "assets;assets" --name="Jobseeker Note System" main.py
-```
-
-**macOS / Linux** — menghasilkan binary satu file:
-
-```bash
-pyinstaller --noconfirm --onefile --windowed --icon=assets/favicon.ico --add-data "assets:assets" --name="Jobseeker Note System" main.py
-```
-
-> Hasil build ada di folder `dist/Jobseeker Note System.exe` (Windows) atau `dist/Jobseeker Note System` (macOS/Linux).
-
-### Penjelasan Flag
-
-| Flag                             | Keterangan                                                                                                           |
-| -------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `--onefile`                      | Semua dependensi dikemas dalam **satu file** executable                                                              |
-| `--windowed`                     | Jalankan tanpa jendela terminal/console (mode GUI)                                                                   |
-| `--icon=assets/favicon.ico`      | Ikon pada file `.exe` di File Explorer / Finder                                                                      |
-| `--add-data "assets;assets"`     | **Bundel** folder `assets/` ke dalam `.exe` agar ikon muncul saat runtime (Windows pakai `;`, macOS/Linux pakai `:`) |
-| `--name="Jobseeker Note System"` | Nama file output                                                                                                     |
-| `--noconfirm`                    | Timpa folder `dist/` tanpa konfirmasi                                                                                |
-
-### Membersihkan Hasil Build
-
-```bash
-rm -rf build/ dist/ "Jobseeker Note System.spec"
-```
-
----
-
-## Menggunakan File .spec (Opsional)
-
-Untuk konfigurasi build lebih lanjut, tersedia file `.spec` yang sudah dikonfigurasi dengan optimasi:
-
-- Library berat seperti `pandas`, `numpy`, `matplotlib` dikeluarkan agar hasil build lebih kecil
-- UPX compression diaktifkan
-- Folder `assets/` otomatis ikut terbundle
+File `build.spec` sudah tersedia di project dan berisi seluruh konfigurasi build. Cukup jalankan:
 
 ```bash
 pyinstaller build.spec
 ```
 
+> Cara ini lebih bersih karena tidak menghasilkan file `.spec` baru dan seluruh konfigurasi build sudah terpusat di satu file.
+
 ---
 
-## Catatan
+### 🔧 Cara 2 — Menggunakan Perintah Manual (Tanpa `.spec`)
 
-- Folder `.venv` tidak perlu di-commit ke Git — tambahkan `.venv/` ke `.gitignore`
-- File hasil build bersifat **portable** — tidak perlu instalasi di komputer lain
-- Untuk menghapus aplikasi: hapus folder hasil extract + file `.pkl` di folder user
-- Aplikasi hanya kompatibel dengan OS yang sama saat build (Windows → Windows)
+Gunakan cara ini jika ingin melakukan build secara langsung tanpa menggunakan file `build.spec`.
+
+> ⚠️ PyInstaller akan otomatis membuat file `Jobseeker Note System.spec` baru di direktori project. File ini bisa diabaikan atau dihapus setelah build selesai.
+
+**Windows:**
+
+```bash
+pyinstaller --noconfirm --onefile --windowed --icon=assets/favicon.ico --add-data "assets;assets" --name="Jobseeker Note System" main.py
+```
+
+**macOS / Linux:**
+
+```bash
+pyinstaller --noconfirm --onefile --windowed --icon=assets/favicon.ico --add-data "assets:assets" --name="Jobseeker Note System" main.py
+```
+
+#### Penjelasan Flag PyInstaller
+
+| Flag          | Penjelasan                                              |
+| ------------- | ------------------------------------------------------- |
+| `--onefile`   | Mengemas semua dependensi dalam satu file executable    |
+| `--windowed`  | Menjalankan aplikasi GUI tanpa membuka jendela terminal |
+| `--icon`      | Menentukan ikon aplikasi                                |
+| `--add-data`  | Menyertakan folder `assets` ke dalam build              |
+| `--name`      | Menentukan nama file output                             |
+| `--noconfirm` | Menimpa folder build tanpa meminta konfirmasi           |
+
+---
+
+### Hasil Build
+
+Setelah build selesai (dengan cara apapun), file executable akan tersimpan di folder:
+
+```
+dist/
+└── Jobseeker Note System.exe
+```
+
+---
+
+## 🧹 Membersihkan Hasil Build
+
+Untuk menghapus file hasil build:
+
+```bash
+rm -rf build dist *.spec
+```
+
+> ⚠️ Perintah `*.spec` akan menghapus **semua** file `.spec` di direktori saat ini, termasuk `build.spec`. Pastikan `build.spec` sudah ter-commit ke Git sebelum menjalankan perintah ini, atau hapus folder `build` dan `dist` secara manual tanpa menyertakan `*.spec`.
+
+---
+
+## 📌 Catatan
+
+- Folder `.venv` **tidak** perlu di-commit ke Git — tambahkan `.venv/` ke `.gitignore`
+- File `.exe` hasil build bersifat **portable**
+- Aplikasi hanya kompatibel dengan sistem operasi yang sama saat proses build dilakukan
+
+| Build di | Bisa dijalankan di |
+| -------- | ------------------ |
+| Windows  | Windows            |
+| Linux    | Linux              |
+| macOS    | macOS              |
